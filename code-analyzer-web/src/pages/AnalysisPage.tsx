@@ -1,15 +1,15 @@
 import { useState } from "react";
 
-import { analyze } from "./api/analysis";
+import { analyze } from "../api/analysis";
 
-import CodeInput from "./components/CodeInput/CodeInput";
+import CodeInput from "../components/CodeInput/CodeInput";
 
-import AnalysisResult from "./components/AnalysisResult/AnalysisResult";
+import AnalysisResult from "../components/AnalysisResult/AnalysisResult";
 
-import InstructionInput from "./components/InstructionInput/InstructionInput";
+import InstructionInput from "../components/InstructionInput/InstructionInput";
 
-function App() {
-  const [instruction, setInstruction] =
+const AnalysisPage = () => {
+   const [instruction, setInstruction] =
   useState(
     "Review this code and suggest improvements."
   );
@@ -161,6 +161,6 @@ setResult(response);
     </div>
   </div>
 );
-}
+};
 
-export default App;
+export default AnalysisPage;
