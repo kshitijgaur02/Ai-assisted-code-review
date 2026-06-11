@@ -1,0 +1,21 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Analysis {
+  id          String   @id @default(uuid())
+
+  instruction String
+
+  content     String
+
+  result      Json
+
+  createdAt   DateTime @default(now())
+
+  @@map("analyses")
+}
