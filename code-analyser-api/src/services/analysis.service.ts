@@ -7,12 +7,14 @@ import { AnalysisResponse }
 
 export const saveAnalysis =
   async (
+    userId: string,
     instruction: string,
     content: string,
     result: AnalysisResponse
   ) => {
     return prisma.analysis.create({
       data: {
+        userId,
         instruction,
         content,
         result:

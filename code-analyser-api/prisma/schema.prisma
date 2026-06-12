@@ -6,16 +6,32 @@ datasource db {
   provider = "postgresql"
 }
 
+model User {
+  id String @id
+
+  email String @unique
+
+  createdAt DateTime @default(now())
+
+  analyses Analysis[]
+
+  @@map("users")
+}
+
 model Analysis {
-  id          String   @id @default(uuid())
+  id String @id @default(uuid())
 
   instruction String
 
-  content     String
+  content String
 
-  result      Json
+  result Json
 
-  createdAt   DateTime @default(now())
+  userId String?
+
+  user User? @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
 
   @@map("analyses")
 }
