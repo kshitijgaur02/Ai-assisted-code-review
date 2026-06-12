@@ -1,66 +1,156 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
+
+import PageContainer from "../components/PageContainer/PageContainer";
+import StatCard from "../components/StatCard/StatCard";
+
 import { getAnalyses } from "../api/analyses";
 
 const DashboardPage = () => {
-  const [analyses, setAnalyses] = useState([]);
-  const { user, getAccessTokenSilently } = useAuth0();
+  const [analyses, setAnalyses] =
+    useState<any[]>([]);
+
+  const {
+    user,
+    getAccessTokenSilently,
+  } = useAuth0();
 
   useEffect(() => {
-  const fetchAnalyses =
-    async () => {
-      try {
+    const fetchAnalyses =
+      async () => {
         const token =
           await getAccessTokenSilently();
 
-        const analyses =
+        const result =
           await getAnalyses(
             token
           );
 
-        setAnalyses(
-          analyses
-        );
-      } catch (error) {
-        console.error(
-          error
-        );
-      }
-    };
+        setAnalyses(result);
+      };
 
-  fetchAnalyses();
-}, [getAccessTokenSilently]);
+    fetchAnalyses();
+  }, [getAccessTokenSilently]);
+
+  const totalAnalyses =
+    analyses.length;
+
+  const totalIssues =
+    useMemo(() => {
+      return analyses.reduce(
+        (total, analysis) =>
+          total +
+          (
+            analysis.result
+              ?.issues ?? []
+          ).length,
+        0
+      );
+    }, [analyses]);
+
+  const totalImprovements =
+    useMemo(() => {
+      return analyses.reduce(
+        (total, analysis) =>
+          total +
+          (
+            analysis.result
+              ?.improvements ??
+            []
+          ).length,
+        0
+      );
+    }, [analyses]);
 
   return (
-    <div>
-      <h1 className="text-3xl font-bold">Dashboard</h1>
-
-      <p className="mt-2 text-gray-600">Welcome, {user?.name}!</p>
+    <PageContainer
+      title={`Welcome back, ${user?.name}`}
+      subtitle="Your AI-assisted code review history."
+    >
+      {/* Stats */}
 
       <div
         className="
-          mt-6
-          space-y-4
+          grid
+          gap-4
+          md:grid-cols-3
         "
       >
-        {analyses.map((analysis: any) => (
-          <div
-            key={analysis.id}
-            className="
-                rounded
-                border
-                p-4
-              "
-          >
-            <h2>{analysis.instruction}</h2>
+        <StatCard
+          title="Analyses"
+          value={
+            totalAnalyses
+          }
+        />
 
-            <p>{new Date(analysis.createdAt).toLocaleString()}</p>
-          </div>
-        ))}
+        <StatCard
+          title="Issues Found"
+          value={
+            totalIssues
+          }
+        />
 
-        
+        <StatCard
+          title="Suggestions"
+          value={
+            totalImprovements
+          }
+        />
       </div>
-    </div>
+
+      {/* Recent Analyses */}
+
+      <div className="mt-8">
+        <h2
+          className="
+            mb-4
+            text-xl
+            font-semibold
+          "
+        >
+          Recent Analyses
+        </h2>
+
+        <div className="space-y-4">
+          {analyses.map(
+            (analysis) => (
+              <div
+                key={analysis.id}
+                className="
+                  rounded-xl
+                  border
+                  bg-white
+                  p-5
+                  shadow-sm
+                "
+              >
+                <h3
+                  className="
+                    font-medium
+                  "
+                >
+                  {
+                    analysis.instruction
+                  }
+                </h3>
+
+                <p
+                  className="
+                    mt-2
+                    text-sm
+                    text-gray-500
+                  "
+                >
+                  {new Date(
+                    analysis.createdAt
+                  ).toLocaleString()}
+                </p>
+              </div>
+            )
+          )}
+        </div>
+      </div>
+    </PageContainer>
   );
 };
 

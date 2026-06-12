@@ -1,127 +1,150 @@
-import type { AnalysisResult as AnalysisResultType } from "../../types/analysis";
+type Props = {
+  result: any;
+};
 
-interface Props {
-  result: AnalysisResultType | null;
-}
-
-export default function AnalysisResult({
+const AnalysisResult = ({
   result,
-}: Props) {
+}: Props) => {
   if (!result) {
+    return null;
+  }
+
+  if (result.error) {
     return (
-      <p className="text-slate-500">
-        Run an analysis to see results.
-      </p>
+      <div
+        className="
+          rounded-lg
+          border
+          border-red-300
+          bg-red-50
+          p-4
+        "
+      >
+        {result.error}
+      </div>
     );
   }
 
   return (
-    <div className="space-y-8">
-      {/* Explanation */}
-      <section>
-        <h2 className="mb-3 text-xl font-semibold">
+    <div className="space-y-6">
+      <section
+        className="
+          rounded-lg
+          border
+          bg-white
+          p-5
+        "
+      >
+        <h2 className="mb-2 text-xl font-semibold">
           Explanation
         </h2>
 
-        <div className="rounded-lg border border-slate-700 bg-slate-950 p-4">
-          <p className="text-slate-300">
-            {result.explanation}
-          </p>
-        </div>
+        <p>{result.explanation}</p>
       </section>
 
-      {/* Issues */}
-      <section>
-        <h2 className="mb-3 text-xl font-semibold">
+      <section
+        className="
+          rounded-lg
+          border
+          bg-white
+          p-5
+        "
+      >
+        <h2 className="mb-4 text-xl font-semibold">
           Issues
         </h2>
 
-        {result.issues.length === 0 ? (
-          <p className="text-slate-500">
-            No issues found.
-          </p>
-        ) : (
-          <div className="space-y-3">
-            {result.issues.map((issue, index) => (
+        <div className="space-y-3">
+          {result.issues?.map(
+            (
+              issue: any,
+              index: number
+            ) => (
               <div
-                key={`${issue.title}-${index}`}
-                className="rounded-lg border border-slate-700 bg-slate-950 p-4"
+                key={index}
+                className="
+                  rounded
+                  border
+                  p-3
+                "
               >
-                <div className="flex items-center justify-between">
-                  <p className="font-medium">
-                    {issue.title}
-                  </p>
+                <p className="font-medium">
+                  {issue.title}
+                </p>
 
-                  <span
-                    className={`rounded px-2 py-1 text-xs font-semibold ${
-                      issue.severity === "high"
-                        ? "bg-red-500/20 text-red-300"
-                        : issue.severity === "medium"
-                        ? "bg-yellow-500/20 text-yellow-300"
-                        : "bg-green-500/20 text-green-300"
-                    }`}
-                  >
-                    {issue.severity.toUpperCase()}
-                  </span>
-                </div>
+                <p className="text-sm text-gray-500">
+                  Severity:
+                  {" "}
+                  {issue.severity}
+                </p>
               </div>
-            ))}
-          </div>
-        )}
+            )
+          )}
+        </div>
       </section>
 
-      {/* Improvements */}
-      <section>
-        <h2 className="mb-3 text-xl font-semibold">
+      <section
+        className="
+          rounded-lg
+          border
+          bg-white
+          p-5
+        "
+      >
+        <h2 className="mb-4 text-xl font-semibold">
           Improvements
         </h2>
 
-        {result.improvements.length === 0 ? (
-          <p className="text-slate-500">
-            No improvements suggested.
-          </p>
-        ) : (
-          <div className="space-y-4">
-            {result.improvements.map(
-              (improvement, index) => (
-                <div
-                  key={`${improvement.title}-${index}`}
-                  className="rounded-lg border border-slate-700 bg-slate-950 p-4"
-                >
-                  <h3 className="font-semibold">
-                    {improvement.title}
-                  </h3>
+        <div className="space-y-4">
+          {result.improvements?.map(
+            (
+              improvement: any,
+              index: number
+            ) => (
+              <div
+                key={index}
+                className="
+                  rounded
+                  border
+                  p-4
+                "
+              >
+                <h3 className="font-medium">
+                  {improvement.title}
+                </h3>
 
-                  <p className="mt-2 text-slate-300">
-                    {improvement.explanation}
-                  </p>
+                <p className="mt-2">
+                  {
+                    improvement.explanation
+                  }
+                </p>
 
-                  {improvement.snippet && (
-                    <>
-                      <pre className="mt-4 overflow-auto rounded-lg bg-slate-900 p-4 text-sm">
-                        <code>
-                          {improvement.snippet}
-                        </code>
-                      </pre>
-
-                      <button
-                        onClick={() =>
-                          navigator.clipboard.writeText(
-                            improvement.snippet
-                          )
-                        }
-                        className="mt-3 rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium hover:bg-blue-500"
-                      >
-                        Copy Snippet
-                      </button>
-                    </>
-                  )}
-                </div>
-              )
-            )}
-          </div>
-        )}
+                {improvement.snippet && (
+                  <pre
+                    className="
+                      mt-4
+                      overflow-x-auto
+                      rounded
+                      bg-gray-900
+                      p-4
+                      text-sm
+                      text-white
+                    "
+                  >
+                    <code>
+                      {
+                        improvement.snippet
+                      }
+                    </code>
+                  </pre>
+                )}
+              </div>
+            )
+          )}
+        </div>
       </section>
     </div>
   );
-}
+};
+
+export default AnalysisResult;

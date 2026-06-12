@@ -1,17 +1,16 @@
 import { useState } from "react";
+import { useAuth0 } from "@auth0/auth0-react";
 
 import { analyze } from "../api/analysis";
 
-import CodeInput from "../components/CodeInput/CodeInput";
-
-import AnalysisResult from "../components/AnalysisResult/AnalysisResult";
-
+import PageContainer from "../components/PageContainer/PageContainer";
 import InstructionInput from "../components/InstructionInput/InstructionInput";
-import { useAuth0 } from "@auth0/auth0-react";
+import CodeInput from "../components/CodeInput/CodeInput";
+import AnalysisResult from "../components/AnalysisResult/AnalysisResult";
 
 const AnalysisPage = () => {
   const [instruction, setInstruction] = useState(
-    "Review this code and suggest improvements.",
+    "Review this code and suggest improvements."
   );
 
   const [content, setContent] = useState("");
@@ -22,16 +21,27 @@ const AnalysisPage = () => {
 
   const [error, setError] = useState("");
 
-  const { user, getAccessTokenSilently } = useAuth0();
+  const {
+    user,
+    getAccessTokenSilently,
+  } = useAuth0();
 
-  async function handleAnalyze() {
+  const handleAnalyze = async () => {
     setLoading(true);
-    const token = await getAccessTokenSilently();
 
     try {
       setError("");
 
-      const response = await analyze(instruction, content, token, user?.email as string);
+      const token =
+        await getAccessTokenSilently();
+
+      const response =
+        await analyze(
+          instruction,
+          content,
+          token,
+          user?.email as string
+        );
 
       if (response.error) {
         setError(response.error);
@@ -43,94 +53,176 @@ const AnalysisPage = () => {
     } finally {
       setLoading(false);
     }
-  }
+  };
 
-  const isAnalyzeDisabled = !instruction.trim() || !content.trim() || loading;
+  const isAnalyzeDisabled =
+    !instruction.trim() ||
+    !content.trim() ||
+    loading;
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
-      <div className="mx-auto max-w-7xl px-6 py-10">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold">AI CODE ANALYZER</h1>
-        </div>
+    <PageContainer
+      title="Analyze Code"
+      subtitle="Paste code and receive AI-powered feedback."
+    >
+      <div
+        className="
+          grid
+          gap-6
+          lg:grid-cols-2
+        "
+      >
+        {/* Input Panel */}
 
-        <div className="grid gap-6 lg:grid-cols-2">
-          {/* Left Panel */}
-          <div className="rounded-xl border border-slate-800 bg-slate-900 p-6">
-            <div className="mb-4">
-              <label className="mb-2 block text-sm font-medium">
-                Instruction
-              </label>
-
-              <InstructionInput value={instruction} onChange={setInstruction} />
-            </div>
-
-            <div className="mb-4">
-              <label className="mb-2 block text-sm font-medium">
-                Code / Content
-              </label>
-
-              <CodeInput value={content} onChange={setContent} />
-            </div>
-
-            <button
-              onClick={handleAnalyze}
-              disabled={isAnalyzeDisabled}
-              className={`
-  w-full
-  rounded-lg
-  px-4
-  py-3
-  font-medium
-  transition
-  ${
-    isAnalyzeDisabled
-      ? "cursor-not-allowed bg-slate-700 text-slate-400"
-      : "bg-blue-600 hover:bg-blue-500"
-  }
-`}
+        <div
+          className="
+            rounded-xl
+            border
+            bg-white
+            p-6
+            shadow-sm
+          "
+        >
+          <div className="mb-4">
+            <label
+              className="
+                mb-2
+                block
+                text-sm
+                font-medium
+              "
             >
-              {loading ? "Analyzing..." : "Analyze"}
-            </button>
-            {!instruction.trim() && (
-              <p className="mt-2 text-sm text-red-400">Enter an instruction.</p>
-            )}
+              Instruction
+            </label>
 
-            {instruction.trim() && !content.trim() && (
-              <p className="mt-2 text-sm text-red-400">
-                Enter some code to analyze.
+            <InstructionInput
+              value={instruction}
+              onChange={setInstruction}
+            />
+          </div>
+
+          <div className="mb-4">
+            <label
+              className="
+                mb-2
+                block
+                text-sm
+                font-medium
+              "
+            >
+              Code / Content
+            </label>
+
+            <CodeInput
+              value={content}
+              onChange={setContent}
+            />
+          </div>
+
+          <button
+            onClick={handleAnalyze}
+            disabled={
+              isAnalyzeDisabled
+            }
+            className="
+              w-full
+              rounded-lg
+              bg-blue-600
+              px-4
+              py-3
+              font-medium
+              text-white
+              transition
+              hover:bg-blue-700
+              disabled:cursor-not-allowed
+              disabled:bg-gray-400
+            "
+          >
+            {loading
+              ? "Analyzing..."
+              : "Analyze Code"}
+          </button>
+
+          {!instruction.trim() && (
+            <p
+              className="
+                mt-2
+                text-sm
+                text-red-500
+              "
+            >
+              Enter an instruction.
+            </p>
+          )}
+
+          {instruction.trim() &&
+            !content.trim() && (
+              <p
+                className="
+                  mt-2
+                  text-sm
+                  text-red-500
+                "
+              >
+                Enter some code to
+                analyze.
               </p>
             )}
-          </div>
+        </div>
 
-          {/* Right Panel */}
-          <div className="rounded-xl border border-slate-800 bg-slate-900 p-6">
-            {error && (
-              <div
-                className="
-      mb-4
-      rounded-lg
-      border
-      border-red-500/30
-      bg-red-500/10
-      p-4
-      text-red-300
-    "
-              >
-                {error}
-              </div>
-            )}
-            <h2 className="mb-4 text-xl font-semibold">Analysis Result</h2>
+        {/* Results Panel */}
 
-            {loading ? (
-              <div className="text-slate-400">Thinking...</div>
-            ) : (
-              <AnalysisResult result={result} />
-            )}
-          </div>
+        <div
+          className="
+            rounded-xl
+            border
+            bg-white
+            p-6
+            shadow-sm
+          "
+        >
+          <h2
+            className="
+              mb-4
+              text-xl
+              font-semibold
+            "
+          >
+            Analysis Result
+          </h2>
+
+          {error && (
+            <div
+              className="
+                mb-4
+                rounded-lg
+                border
+                border-red-300
+                bg-red-50
+                p-4
+                text-red-700
+              "
+            >
+              {error}
+            </div>
+          )}
+
+          {loading ? (
+            <div
+              className="
+                text-gray-500
+              "
+            >
+              Thinking...
+            </div>
+          ) : (
+            <AnalysisResult
+              result={result}
+            />
+          )}
         </div>
       </div>
-    </div>
+    </PageContainer>
   );
 };
 
