@@ -1,0 +1,22 @@
+services:
+  backend:
+    image: developer-ai-assisted-code-analyser-backend:latest
+
+    container_name: code-analyzer-api
+
+    env_file:
+      - ./code-analyser-api/.env
+
+    ports:
+      - "4000:4000"
+
+  frontend:
+    image: developer-ai-assisted-code-analyser-frontend:latest
+
+    container_name: code-analyzer-web
+
+    depends_on:
+      - backend
+
+    ports:
+      - "5173:5173"

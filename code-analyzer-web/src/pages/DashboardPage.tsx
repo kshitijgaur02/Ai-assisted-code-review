@@ -5,62 +5,43 @@ import PageContainer from "../components/PageContainer/PageContainer";
 import StatCard from "../components/StatCard/StatCard";
 
 import { getAnalyses } from "../api/analyses";
+import AnalysisCard from "../components/AnalysisCard/AnalysisCard";
+import AnalysisModal from "../components/AnalysisModal/AnalysisModal";
 
 const DashboardPage = () => {
-  const [analyses, setAnalyses] =
-    useState<any[]>([]);
+  const [analyses, setAnalyses] = useState<any[]>([]);
 
-  const {
-    user,
-    getAccessTokenSilently,
-  } = useAuth0();
+  const [selectedAnalysis, setSelectedAnalysis] = useState(null);
+
+  const { user, getAccessTokenSilently } = useAuth0();
 
   useEffect(() => {
-    const fetchAnalyses =
-      async () => {
-        const token =
-          await getAccessTokenSilently();
+    const fetchAnalyses = async () => {
+      const token = await getAccessTokenSilently();
 
-        const result =
-          await getAnalyses(
-            token
-          );
+      const result = await getAnalyses(token);
 
-        setAnalyses(result);
-      };
+      setAnalyses(result);
+    };
 
     fetchAnalyses();
   }, [getAccessTokenSilently]);
 
-  const totalAnalyses =
-    analyses.length;
+  const totalAnalyses = analyses.length;
 
-  const totalIssues =
-    useMemo(() => {
-      return analyses.reduce(
-        (total, analysis) =>
-          total +
-          (
-            analysis.result
-              ?.issues ?? []
-          ).length,
-        0
-      );
-    }, [analyses]);
+  const totalIssues = useMemo(() => {
+    return analyses.reduce(
+      (total, analysis) => total + (analysis.result?.issues ?? []).length,
+      0,
+    );
+  }, [analyses]);
 
-  const totalImprovements =
-    useMemo(() => {
-      return analyses.reduce(
-        (total, analysis) =>
-          total +
-          (
-            analysis.result
-              ?.improvements ??
-            []
-          ).length,
-        0
-      );
-    }, [analyses]);
+  const totalImprovements = useMemo(() => {
+    return analyses.reduce(
+      (total, analysis) => total + (analysis.result?.improvements ?? []).length,
+      0,
+    );
+  }, [analyses]);
 
   return (
     <PageContainer
@@ -76,26 +57,11 @@ const DashboardPage = () => {
           md:grid-cols-3
         "
       >
-        <StatCard
-          title="Analyses"
-          value={
-            totalAnalyses
-          }
-        />
+        <StatCard title="Analyses" value={totalAnalyses} />
 
-        <StatCard
-          title="Issues Found"
-          value={
-            totalIssues
-          }
-        />
+        <StatCard title="Issues Found" value={totalIssues} />
 
-        <StatCard
-          title="Suggestions"
-          value={
-            totalImprovements
-          }
-        />
+        <StatCard title="Suggestions" value={totalImprovements} />
       </div>
 
       {/* Recent Analyses */}
@@ -112,43 +78,20 @@ const DashboardPage = () => {
         </h2>
 
         <div className="space-y-4">
-          {analyses.map(
-            (analysis) => (
-              <div
-                key={analysis.id}
-                className="
-                  rounded-xl
-                  border
-                  bg-white
-                  p-5
-                  shadow-sm
-                "
-              >
-                <h3
-                  className="
-                    font-medium
-                  "
-                >
-                  {
-                    analysis.instruction
-                  }
-                </h3>
-
-                <p
-                  className="
-                    mt-2
-                    text-sm
-                    text-gray-500
-                  "
-                >
-                  {new Date(
-                    analysis.createdAt
-                  ).toLocaleString()}
-                </p>
-              </div>
-            )
-          )}
+          {analyses.map((analysis) => (
+            <AnalysisCard
+              key={analysis.id}
+              analysis={analysis}
+              onClick={() => setSelectedAnalysis(analysis)}
+            />
+          ))}
         </div>
+        {selectedAnalysis && (
+          <AnalysisModal
+            analysis={selectedAnalysis}
+            onClose={() => setSelectedAnalysis(null)}
+          />
+        )}
       </div>
     </PageContainer>
   );
