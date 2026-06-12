@@ -1,10 +1,10 @@
+import SnippetCard from "../SnippetCard/SnipperCard";
+
 type Props = {
   result: any;
 };
 
-const AnalysisResult = ({
-  result,
-}: Props) => {
+const AnalysisResult = ({ result }: Props) => {
   if (!result) {
     return null;
   }
@@ -35,9 +35,7 @@ const AnalysisResult = ({
           p-5
         "
       >
-        <h2 className="mb-2 text-xl font-semibold">
-          Explanation
-        </h2>
+        <h2 className="mb-2 text-xl font-semibold">Explanation</h2>
 
         <p>{result.explanation}</p>
       </section>
@@ -50,36 +48,25 @@ const AnalysisResult = ({
           p-5
         "
       >
-        <h2 className="mb-4 text-xl font-semibold">
-          Issues
-        </h2>
+        <h2 className="mb-4 text-xl font-semibold">Issues</h2>
 
         <div className="space-y-3">
-          {result.issues?.map(
-            (
-              issue: any,
-              index: number
-            ) => (
-              <div
-                key={index}
-                className="
+          {result.issues?.map((issue: any, index: number) => (
+            <div
+              key={index}
+              className="
                   rounded
                   border
                   p-3
                 "
-              >
-                <p className="font-medium">
-                  {issue.title}
-                </p>
+            >
+              <p className="font-medium">{issue.title}</p>
 
-                <p className="text-sm text-gray-500">
-                  Severity:
-                  {" "}
-                  {issue.severity}
-                </p>
-              </div>
-            )
-          )}
+              <p className="text-sm text-gray-500">
+                Severity: {issue.severity}
+              </p>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -91,56 +78,27 @@ const AnalysisResult = ({
           p-5
         "
       >
-        <h2 className="mb-4 text-xl font-semibold">
-          Improvements
-        </h2>
+        <h2 className="mb-4 text-xl font-semibold">Improvements</h2>
 
         <div className="space-y-4">
-          {result.improvements?.map(
-            (
-              improvement: any,
-              index: number
-            ) => (
-              <div
-                key={index}
-                className="
+          {result.improvements?.map((improvement: any, index: number) => (
+            <div
+              key={index}
+              className="
                   rounded
                   border
                   p-4
                 "
-              >
-                <h3 className="font-medium">
-                  {improvement.title}
-                </h3>
+            >
+              <h3 className="font-medium">{improvement.title}</h3>
 
-                <p className="mt-2">
-                  {
-                    improvement.explanation
-                  }
-                </p>
+              <p className="mt-2">{improvement.explanation}</p>
 
-                {improvement.snippet && (
-                  <pre
-                    className="
-                      mt-4
-                      overflow-x-auto
-                      rounded
-                      bg-gray-900
-                      p-4
-                      text-sm
-                      text-white
-                    "
-                  >
-                    <code>
-                      {
-                        improvement.snippet
-                      }
-                    </code>
-                  </pre>
-                )}
-              </div>
-            )
-          )}
+              {improvement.snippet && (
+                <SnippetCard code={improvement.snippet} />
+              )}
+            </div>
+          ))}
         </div>
       </section>
     </div>

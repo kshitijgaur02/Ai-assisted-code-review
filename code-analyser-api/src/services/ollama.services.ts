@@ -5,7 +5,7 @@ export async function analyzeWithOllama(
   prompt: string
 ) {
   const response = await axios.post(
-    "http://localhost:11434/api/generate",
+    "http://host.docker.internal:11434/api/generate",
     {
       model: "qwen3:8b",
       prompt,
