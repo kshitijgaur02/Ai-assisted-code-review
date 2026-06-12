@@ -3,6 +3,7 @@ import cors from "cors";
 
 import analyzeRoutes from "./routes/analyze.routes.js";
 import analysisRoutes from "./routes/analysis.routes.js";
+import authRoutes from "./routes/auth.routes.js";
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.get("/health", (_, res) => {
 
 app.use("/api/analyze", analyzeRoutes);
 app.use("/api/analyses", analysisRoutes);
+app.use("/api/auth", authRoutes);
 
 app.listen(4000, () => {
   console.log("Server running on 4000");

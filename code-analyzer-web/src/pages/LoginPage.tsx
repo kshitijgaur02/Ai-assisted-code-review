@@ -1,26 +1,36 @@
 import {
-  useNavigate,
+  Navigate,
 } from "react-router-dom";
 
+import {
+  useAuth0,
+} from "@auth0/auth0-react";
+
 const LoginPage = () => {
-  const navigate =
-    useNavigate();
+  const {
+    loginWithRedirect,
+    isAuthenticated,
+    isLoading,
+  } = useAuth0();
 
-  const handleLogin =
-    () => {
-      localStorage.setItem(
-        "token",
-        "demo"
-      );
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
 
-      navigate(
-        "/dashboard"
-      );
-    };
+  if (isAuthenticated) {
+    return (
+      <Navigate
+        to="/dashboard"
+        replace
+      />
+    );
+  }
 
   return (
     <button
-      onClick={handleLogin}
+      onClick={() =>
+        loginWithRedirect()
+      }
     >
       Login
     </button>

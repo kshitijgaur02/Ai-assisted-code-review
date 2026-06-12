@@ -9,24 +9,21 @@ export const getAnalyses =
     req: Request,
     res: Response
   ) => {
-    try {
-      const analyses =
-        await prisma.analysis.findMany({
-          orderBy: {
-            createdAt: "desc",
-          },
-        });
+    const sub =
+      req.auth?.payload.sub;
 
-      return res.json(
-        analyses
-      );
-
-    } catch (error) {
-      console.error(error);
-
-      return res.status(500).json({
-        error:
-          "Failed to fetch analyses",
+    const analyses =
+      await prisma.analysis.findMany({
+        where: {
+          userId: sub,
+        },
+        orderBy: {
+          createdAt:
+            "desc",
+        },
       });
-    }
+
+    res.json(
+      analyses
+    );
   };
