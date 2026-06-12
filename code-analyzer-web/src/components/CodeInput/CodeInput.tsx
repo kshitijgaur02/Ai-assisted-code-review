@@ -1,34 +1,36 @@
-interface Props {
+type Props = {
   value: string;
   onChange: (
     value: string
   ) => void;
-}
+};
 
-export default function
-CodeInput({
+const CodeInput = ({
   value,
   onChange,
-}: Props) {
+}: Props) => {
   return (
     <textarea
-  rows={16}
-  value={value}
-  onChange={(e) =>
-    onChange(e.target.value)
-  }
-  className="
-    w-full
-    rounded-lg
-    border
-    border-slate-700
-    bg-slate-950
-    p-4
-    font-mono
-    text-sm
-    outline-none
-    focus:border-blue-500
-  "
-/>
+      value={value}
+      onChange={(e) =>
+        onChange(e.target.value)
+      }
+      placeholder="Paste your code here..."
+      className="
+        h-96
+        w-full
+        rounded-lg
+        border
+        bg-white
+        p-4
+        font-mono
+        shadow-sm
+        focus:outline-none
+        focus:ring-2
+        focus:ring-blue-500
+      "
+    />
   );
-}
+};
+
+export default CodeInput;

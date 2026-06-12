@@ -1,31 +1,31 @@
-interface Props {
+type Props = {
   value: string;
   onChange: (
     value: string
   ) => void;
-}
+};
 
-export default function InstructionInput({
+const InstructionInput = ({
   value,
   onChange,
-}: Props) {
+}: Props) => {
   return (
-    <textarea
-      rows={4}
+    <input
       value={value}
       onChange={(e) =>
         onChange(e.target.value)
       }
-      placeholder="Review this code like a senior engineer..."
+      placeholder="What would you like reviewed?"
       className="
         w-full
         rounded-lg
         border
-        border-slate-700
-        bg-slate-950
-        p-4
-        text-sm
+        bg-white
+        p-3
+        shadow-sm
       "
     />
   );
-}
+};
+
+export default InstructionInput;
